@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState,useEffect,useReducer } from "react";
 
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
@@ -24,9 +24,11 @@ const passwordReducer = (state,action)=>{
   return { value :"", isValid: false}
 }
 
-const Login = (props) => {
-  const [formIsValid, setFormIsValid] = useState(false);
 
+const Login = (props) => {
+  
+  const [formIsValid, setFormIsValid] = useState(false);
+  
   const [emailState, dispatchEmail] = useReducer(emailReducer, {
     value: "",
     isValid: null,
@@ -36,6 +38,20 @@ const Login = (props) => {
     value: "",
     isValid: null,
   });  
+
+  const {isValid: emailIsValid}= emailState
+  const {isValid: passwordIsValid}= passwordState
+  useEffect(()=>{
+    const timer=setTimeout(()=>{
+      setFormIsValid(
+        emailIsValid && passwordIsValid
+      );
+    },500)
+    
+    return ()=>{
+      clearTimeout(timer)
+    }
+  },[emailIsValid,passwordIsValid])
   
   const emailChangeHandler = (event) => {
     dispatchEmail({ type: "USER_INPUT", payload: event.target.value });
